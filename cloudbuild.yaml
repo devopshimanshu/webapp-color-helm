@@ -1,0 +1,37 @@
+steps:
+# This step clones the hello-cloudbuild-env repository
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: Clone gtops repository
+  entrypoint: /bin/sh
+  args:
+  - '-c'
+  - |
+    git clone https://$${GH_TOKEN}@github.com/devopshimanshu/webapp-color-helm.git && \
+    cd webapp-color-helm && \
+    git config user.email "cloud.himanshu2022@gmail.com"
+  secretEnv: ['GH_TOKEN']
+# Configure a kubectl workspace for this project
+- name: gcr.io/cloud-builders/kubectl
+  args:
+    - cluster-info
+  env:
+    - CLOUDSDK_COMPUTE_ZONE=us-central1-c
+    - CLOUDSDK_CONTAINER_CLUSTER=helm-demo
+    - KUBECONFIG=/workspace/.kube/config
+# Deploy with Helm
+- name: gcr.io/$PROJECT_ID/helm
+  args:
+    - upgrade
+    - -i
+    - webapp-color
+    - ./webapp-color-helm
+    - --set
+    - image.repository=gcr.io/$PROJECT_ID/webapp-color,image.tag=$SHORT_SHA
+    - -f
+    - ./webapp-color-helm/tag-values.yaml 
+  env:
+    - KUBECONFIG=/workspace/.kube/config
+availableSecrets:
+  secretManager:
+  - versionName: projects/155192297176/secrets/github-token-devopshimanshu/versions/1
+    env: GH_TOKEN
