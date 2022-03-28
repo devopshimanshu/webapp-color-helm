@@ -25,8 +25,6 @@ steps:
     - -i
     - webapp-color
     - ./webapp-color-helm
-    - --set
-    - image.repository=gcr.io/$PROJECT_ID/webapp-color,image.tag=$SHORT_SHA
     - -f
     - ./webapp-color-helm/tag-values.yaml 
   env:
