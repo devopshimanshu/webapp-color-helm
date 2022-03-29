@@ -26,7 +26,9 @@ steps:
     - webapp-color
     - ./webapp-color-helm
     - -f
-    - ./webapp-color-helm/tag-values.yaml 
+    - ./webapp-color-helm/values.yaml 
+    - values
+    - ./webapp-color-helm/tag-values.yaml
   env:
     - KUBECONFIG=/workspace/.kube/config
 availableSecrets:
